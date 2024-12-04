@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Message extends Model
 {
-    public $fillable = ['conversaion_id', 'sender', 'message', 'data'];
+    public $fillable = ['conversation_id', 'sender', 'message', 'data'];
 
     public $casts = [
         'data'=> 'array'
     ];
 
-    public function conversation(): BelongsTo|Conversaion
+    public function conversation(): BelongsTo|Conversation
     {
-        return $this->belongsTo(Conversaion::class);
+        return $this->belongsTo(Conversation::class);
     }
 }

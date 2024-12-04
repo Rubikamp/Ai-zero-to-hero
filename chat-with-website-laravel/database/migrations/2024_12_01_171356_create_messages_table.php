@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('conversaion_id');
-            $table->foreign('conversaion_id')->references('id')->on('conversaions')->onDelete('cascade');
+            $table->unsignedBigInteger('conversation_id');
+            $table->foreign('conversation_id')->references('id')->on('conversations')->onDelete('cascade');
             $table->enum('sender', ['assistant', 'user']);
             $table->text('message');
             $table->json('data')->nullable();
