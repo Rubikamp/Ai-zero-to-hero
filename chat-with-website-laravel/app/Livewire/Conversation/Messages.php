@@ -5,6 +5,7 @@ namespace App\Livewire\Conversation;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Source;
+use App\Service\MetisClient;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use OpenAI;
@@ -31,7 +32,7 @@ class Messages extends Component
             'message_input' => ['required', 'string', 'min:2', 'max:500']
         ]);
 
-        $result = $this->getClient()->chat()->create([
+        $result = MetisClient::getClient()->chat()->create([
             'model' => 'gpt-4o-mini',
             'messages' => $this->getMessagesAsOpenAiArray(),
         ]);
@@ -91,14 +92,6 @@ class Messages extends Component
         }
 
         return $prompt . "</context>";
-    }
-
-    protected function getClient(): Client
-    {
-        return OpenAI::factory()
-            ->withBaseUri('https://api.metisai.ir/openai/v1')
-            ->withHttpHeader('Authorization', "Bearer " . env('OPENAI_API_KEY'))
-            ->make();
     }
 
     public function render()

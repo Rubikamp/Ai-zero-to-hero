@@ -41,6 +41,10 @@ new class extends Component
                     <x-nav-link :href="route('conversation.index')" :active="request()->routeIs('conversation.index')" wire:navigate>
                         Conversation
                     </x-nav-link>
+
+                    <x-nav-link :href="route('parking.index')" :active="request()->routeIs('parking.index')" wire:navigate>
+                        Parking Management
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -99,6 +103,10 @@ new class extends Component
 
             <x-responsive-nav-link :href="route('conversation.index')" :active="request()->routeIs('conversation.index')" wire:navigate>
                 Conversation
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('parking.index')" :active="request()->routeIs('parking.index')" wire:navigate>
+                Parking Management
             </x-responsive-nav-link>
         </div>
 

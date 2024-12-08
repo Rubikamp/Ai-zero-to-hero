@@ -2,6 +2,7 @@
 
 use App\Livewire\Conversation\Chat;
 use App\Livewire\Conversation\Index as ConversationIndex;
+use App\Livewire\Parking\Index as ParkingIndex;
 use App\Livewire\Conversation\Messages;
 use App\Livewire\Panel\Source\Index;
 use App\Livewire\Secret;
@@ -31,6 +32,9 @@ Route::get('/conversation/{conversation}', Messages::class)
     ->middleware('auth')
     ->name('conversation.messages');
 
+Route::get('/parking', ParkingIndex::class)
+    ->middleware('auth')
+    ->name('parking.index');
 
 Route::view('profile', 'profile')
     ->middleware(['auth'])
