@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.ai-content {
+    @apply w-full overflow-auto;
+}

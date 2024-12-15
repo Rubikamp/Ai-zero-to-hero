@@ -31,7 +31,8 @@
                                         {{ auth()->user()->name }}
                                     @endif
                                 </div>
-                                <div>{{ $message->message }}</div>
+
+                                <div class="ai-content">{!! $message->message !!}</div>
                             </div>
                         </div>
                     @endforeach

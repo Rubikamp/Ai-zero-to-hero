@@ -6,10 +6,11 @@ use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\Source;
 use App\Service\MetisClient;
+use App\Service\PineconeService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
-use OpenAI;
 use OpenAI\Client;
+use Probots\Pinecone\Client as PineconeClient;
 
 class Messages extends Component
 {
@@ -17,13 +18,17 @@ class Messages extends Component
 
     public $message_input = '';
 
-    protected ?Client $client = null;
+    protected Client $client;
+    protected PineconeClient $pinecone;
 
     public function mount(Conversation $conversation)
     {
         if ($conversation->user_id !== Auth::id()) return abort(403);
 
         $this->conversation = $conversation;
+
+        // $this->client = MetisClient::getClient();
+        // $this->pinecone = PineconeService::getClient();
     }
 
     public function sendMessage()
@@ -36,7 +41,6 @@ class Messages extends Component
             'model' => 'gpt-4o-mini',
             'messages' => $this->getMessagesAsOpenAiArray(),
         ]);
-
 
         Message::create([
             'conversation_id' => $this->conversation->id,
@@ -80,18 +84,29 @@ class Messages extends Component
     protected function getSystemPrompt()
     {
         $prompt = "You are a helpful assistant with access to a document containing code snippets from a websites. Your task is to answer questions about the functionality and structure of these code snippets.
-            Only answer the questions, provided in the context below. you MUST not answer to any question, if the data for it is not provided.
+            Only answer the questions, provided in the context below. you MUST not answer to any question, if the data for it is not provided. Return the answer in HTML format.
 
-            <context>
+            Start Context:
         ";
 
-        $sources = Source::where('content', 'LIKE', '%' . $this->message_input . '%')->limit(3)->get();
+        $embeddings = MetisClient::getClient()->embeddings()->create([
+            "model" => "text-embedding-3-small",
+            "input" => $this->message_input
+        ]);
 
-        foreach ($sources as $source) {
-            $prompt = $prompt . "\n" . $source->content."\n";
+        $response = PineconeService::getClient()->data()->vectors()->query(
+            vector: $embeddings->embeddings[0]->embedding,
+            topK: 3,
+            namespace: "source_user_" . Auth::id()
+        );
+
+        $matches = $response->json()['matches'];
+
+        foreach ($matches as $match) {
+            $prompt = $prompt . "\n" . $match['metadata']['content'] . "\n";
         }
 
-        return $prompt . "</context>";
+        return $prompt . "End Context";
     }
 
     public function render()
